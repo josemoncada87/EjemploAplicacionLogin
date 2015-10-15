@@ -2,18 +2,15 @@ package co.edu.dmi.monk.ejemploaplicacionlogin;
 
 import android.util.Log;
 
-import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Observable;
 
 /**
- * Created by 1130613425 on 14/10/2015.
+ * Created by josemoncada87 on 14/10/2015. *
  */
 public class Comunicacion extends Observable implements Runnable {
 
@@ -72,13 +69,46 @@ public class Comunicacion extends Observable implements Runnable {
     private void recibir() throws IOException {
         DataInputStream dis = new DataInputStream(s.getInputStream());
         String recibido = dis.readUTF();
-        if(recibido.equals("Login OK")){
+        manejarLogin(recibido);
+        manejarSignup(recibido);
+    }
+
+    private void manejarSignup(String recibido) {
+        if (recibido.contains("signup_resp:")) {
+            String[] partes = recibido.split(":");
+            int resultado = Integer.parseInt(partes[1]);
             setChanged();
-            notifyObservers("Login OK");
+            switch (resultado) {
+                case 0:
+                    notifyObservers("usuario_existe");
+                    break;
+                case 1:
+                    notifyObservers("usuario_registrado");
+                    break;
+            }
             clearChanged();
         }
     }
 
+    private void manejarLogin(String recibido) {
+        if (recibido.contains("login_resp:")) {
+            String[] partes = recibido.split(":");
+            int resultado = Integer.parseInt(partes[1]);
+            setChanged();
+            switch (resultado) {
+                case 0:
+                    notifyObservers("usuario_no_existe");
+                    break;
+                case 1:
+                    notifyObservers("login_ok");
+                    break;
+                case 2:
+                    notifyObservers("login_no_ok");
+                    break;
+            }
+            clearChanged();
+        }
+    }
 
     public void enviar(String msn) {
         if(s != null) {

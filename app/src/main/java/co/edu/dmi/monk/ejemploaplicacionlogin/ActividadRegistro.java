@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class ActividadRegistro extends AppCompatActivity implements Observer {
+
+    private static final String TAG = "ActividadRegistro";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +65,8 @@ public class ActividadRegistro extends AppCompatActivity implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        System.out.println("registrarse: " + observable.getClass() + " // " + ((String) data));
         String mensaje = (String) data;
+        Log.d(TAG, "registrarse: " + observable.getClass() + " // " + mensaje);
         switch (mensaje) {
             case "usuario_existe":
                 runOnUiThread(new Runnable() {

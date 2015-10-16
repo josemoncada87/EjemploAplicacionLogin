@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Observable;
 
 /**
@@ -14,19 +15,15 @@ import java.util.Observable;
  */
 public class Comunicacion extends Observable implements Runnable {
 
-    private static final String TAG = "COM-ANDROID";
+    private static final String TAG = "Comunicacion";
     private static Comunicacion ref;
     private Socket s;
     private boolean corriendo;
 
-    public Comunicacion() {
+    private Comunicacion() {
         s = null;
         corriendo = true;
-        Log.d(TAG, "Comunicacion con el servidor instanciada");
-
-
-
-        System.out.println("---------------------------------------------------------------------");
+        Log.d(TAG, "[ INSTACIA DE COMUNICACIÓN CONSTRUIDA ]");
     }
 
     public static Comunicacion getInstance() {
@@ -41,29 +38,50 @@ public class Comunicacion extends Observable implements Runnable {
 
     @Override
     public void run() {
-        Log.d(TAG, "Hilo de comunicacion iniciado");
+        Log.d(TAG, "[ HILO DE COMUNICACIÓN INICIADO ]");
         while (corriendo) {
             try {
                 if (s == null) {
-                   conectar();
+                    if (!conectar()) {
+                        setChanged();
+                        notifyObservers("No conectado");
+                        clearChanged();
+                    }
                 } else {
                     recibir();
                 }
                 Thread.sleep(500);
             } catch (IOException e) {
-                e.printStackTrace();
-                s = null;
+                //e.printStackTrace();
+                Log.d(TAG, "[ SE PERDIÓ LA CONEXIÓN CON EL SERVIDOR ]");
                 corriendo = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+        try {
+            s.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            s = null;
+        }
     }
 
-    private void conectar() throws IOException {
-        InetAddress dirServidor = InetAddress.getByName("10.0.2.2");
-        s = new Socket(dirServidor, 5000);
-        Log.d(TAG, "Conectado con: " + s.toString());
+    private boolean conectar() {
+        try {
+            InetAddress dirServidor = InetAddress.getByName("10.0.2.2");
+            s = new Socket(dirServidor, 5000);
+            Log.d(TAG, "[ CONECTADO CON: " + s.toString() + " ]");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     private void recibir() throws IOException {
@@ -121,7 +139,7 @@ public class Comunicacion extends Observable implements Runnable {
             }
         }else{
             setChanged();
-            notifyObservers("No conectado");
+            notifyObservers("no_conectado");
             clearChanged();
         }
     }

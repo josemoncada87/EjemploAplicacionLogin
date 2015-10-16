@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import java.util.Observer;
 public class MainActivity extends AppCompatActivity implements Observer {
 
     private static final int REGISTRO_REQ_ACT = 0;
+    private static final String TAG = "MainActivity";
     private String mensajePantalla;
 
     @Override
@@ -49,13 +51,16 @@ public class MainActivity extends AppCompatActivity implements Observer {
                 EditText contrasena = (EditText) findViewById(R.id.ed_txt_pass);
                 String user = usuario.getText().toString();
                 String pass = contrasena.getText().toString();
-                if (user.equals("") && !pass.equals("")) {
+                if (!user.equals("") && !pass.equals("")) {
                     Comunicacion.getInstance().enviar("login_req:" + user + ":" + pass);
+                    Log.d(TAG, "Se envió: login_req:" + user + ":" + pass);
                     usuario.setHintTextColor(Color.BLACK);
                     contrasena.setHintTextColor(Color.BLACK);
                 } else {
                     usuario.setHintTextColor(Color.RED);
                     contrasena.setHintTextColor(Color.RED);
+                    usuario.setHighlightColor(Color.RED);
+                    contrasena.setHighlightColor(Color.RED);
                 }
             }
         });
@@ -63,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        System.out.println("principal: " + observable.getClass() + " // "+((String)data));
         String mensaje = (String) data;
+        Log.d(TAG, "principal: " + observable.getClass() + " // " + mensaje);
         switch (mensaje) {
             case "usuario_no_existe":
                 mostrarMensajeToast("El usuario no está registrado");
@@ -73,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
                 mostrarMensajeToast("Bienvenido");
                 Intent i = new Intent(getApplicationContext(), ActividadMenuPrincipal.class);
                 EditText usuario = (EditText) findViewById(R.id.ed_txt_user);
-                EditText contrasena = (EditText) findViewById(R.id.ed_txt_pass);
                 String user = usuario.getText().toString();
                 i.putExtra("usuario_log", user);
                 startActivity(i);
@@ -110,5 +114,10 @@ public class MainActivity extends AppCompatActivity implements Observer {
                 Log.d("" + this, "Resultado OK");
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
     }
 }

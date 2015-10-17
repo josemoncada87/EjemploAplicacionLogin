@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Re-Conectar"
+        android:id="@+id/conect_main_menu"></item>
+    <item
+        android:title="Configuracion"
+        android:id="@+id/config_main_menu"></item>
+    <item
+        android:title="Acerca de"
+        android:id="@+id/about_main_menu"></item>
+    <item
+        android:title="Salir"
+        android:id="@+id/exit_main_menu"></item>
+</menu>

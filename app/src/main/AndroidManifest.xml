@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".ActividadRegistro">
         </activity>
-        <activity android:name=".ActividadMenuPrincipal"></activity>
+        <activity android:name=".ActividadMenuPrincipal" />
+        <activity android:name=".ActividadConfiguracion"></activity>
     </application>
 
 </manifest>

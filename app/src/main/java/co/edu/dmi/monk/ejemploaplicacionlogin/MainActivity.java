@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -85,6 +87,12 @@ public class MainActivity extends AppCompatActivity implements Observer {
             case "login_no_ok":
                 mostrarMensajeToast("Contraseña incorrecta");
                 break;
+            case "no_conectado":
+                mostrarMensajeToast("No se ha podido establecer conexión");
+                break;
+            case "conectado":
+                mostrarMensajeToast("Conexión establecida");
+                break;
             default:
                 break;
         }
@@ -118,6 +126,33 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about_main_menu:
+                Toast.makeText(getApplicationContext(), "Ejemplo menú de prueba", Toast.LENGTH_LONG).show();
+                return true;
+
+            case R.id.config_main_menu:
+                Intent i = new Intent(getApplicationContext(), ActividadConfiguracion.class);
+                startActivity(i);
+                return true;
+
+            case R.id.conect_main_menu:
+                Comunicacion.getInstance().reintentar();
+                return true;
+
+            case R.id.exit_main_menu:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
